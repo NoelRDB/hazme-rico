@@ -1,0 +1,50 @@
+name: Deploy Hazme Rico
+
+# Este workflow de GitHub Actions es un ejemplo básico de CI/CD. Construye el
+# frontend y despliega el Worker en Cloudflare. Necesitarás configurar los
+# secretos de Cloudflare (por ejemplo `CF_API_TOKEN`, `CF_ACCOUNT_ID` y
+# `CF_ZONE_ID`) en la configuración del repositorio. Ajusta los pasos según
+# tus necesidades y la estructura de tu cuenta.
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies for frontend
+        run: npm ci
+        working-directory: ./hazme-rico/web
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: ./hazme-rico/web
+
+      # Aquí se incluiría el despliegue a Cloudflare Pages. Por ejemplo:
+      # - uses: cloudflare/pages-action@1
+      #   with:
+      #     apiToken: ${{ secrets.CF_API_TOKEN }}
+      #     accountId: ${{ secrets.CF_ACCOUNT_ID }}
+      #     projectName: hazme-rico
+      #     directory: ./hazme-rico/web/dist
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Publish Worker
+        run: wrangler deploy
+        working-directory: ./hazme-rico/worker
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
