@@ -1,0 +1,22 @@
+name = "hazme-rico"
+# La fecha de compatibilidad determina la versión de la API de Workers. Ajusta
+# este valor según la documentación de Cloudflare si usas funciones nuevas.
+compatibility_date = "2023-11-20"
+
+# Entrada principal del Worker. Está ubicada en src/index.ts y compilada a
+# JavaScript por Wrangler de forma automática.
+main = "src/index.ts"
+
+[kv_namespaces]
+bindings = [
+  { binding = "HAZME_RICO_KV", id = "" }
+]
+
+[vars]
+# Contraseña del panel de administración. Este valor se inyecta en tiempo de
+# compilación y no debe dejarse vacío en producción.
+ADMIN_PASS = ""
+
+# Origin permitido para CORS. Si se deja vacío no se añade la cabecera
+# Access-Control-Allow-Origin.
+CORS_ORIGIN = ""
